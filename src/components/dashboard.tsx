@@ -6,15 +6,16 @@ interface value {
 
 export default function Dashboard({keyChar}: value) {
     const [dayWord] = useState<string>('Jeanot');
+    const keyIndex = keyChar.toUpperCase().split('');
 
     const rows = [];
 
-    for (let i = 0; i < 5; i++) {
+    for (let i = 0; i < 7; i++) {
         rows.push(
             <tr className='text-center'>
-                <th>{dayWord.split('').slice(0, 1)}</th>
-                {dayWord.split('').slice(1).map((index) => (
-                    <th key={index}></th>
+                <th>{dayWord[0]}</th>
+                {dayWord.split('').slice(1).map((_, index) => (
+                    <th key={index + 1}>{keyIndex[index] ? keyIndex[index] : '.'}</th>
                 ))}
             </tr>)
     }
@@ -28,7 +29,6 @@ export default function Dashboard({keyChar}: value) {
                     </tbody>
                 </table>
             </div>
-            {keyChar.toUpperCase()}
         </>
     )
 }

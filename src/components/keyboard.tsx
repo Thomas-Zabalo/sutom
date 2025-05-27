@@ -6,9 +6,10 @@ import {faDeleteLeft, faRightToBracket} from "@fortawesome/free-solid-svg-icons"
 
 interface Props {
     getUserKey: (key: string) => void;
+    erase?: () => void;
 }
 
-export default function Keyboard({getUserKey}: Props) {
+export default function Keyboard({getUserKey, erase}: Props) {
     const firstRow = ALPHABET.slice(0, 10);
     const secondRow = ALPHABET.slice(10, 20);
     const thirdRow = ALPHABET.slice(20);
@@ -19,13 +20,16 @@ export default function Keyboard({getUserKey}: Props) {
         }
     }
 
-    function onsubmit(){
+    function onsubmit() {
 
     }
 
-    function ondelete(){
-
+    function ondelete() {
+        if (erase) {
+            erase()
+        }
     }
+
     return (
         <>
             <div className='flex flex-col items-center gap-3'>
