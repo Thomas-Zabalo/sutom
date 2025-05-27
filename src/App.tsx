@@ -2,20 +2,24 @@ import './App.css'
 import Dashboard from "./components/dashboard.tsx";
 import Keyboard from "./components/keyboard.tsx";
 import Button from "./components/button.tsx";
-import {useEffect, useRef, useState} from "react";
+import {useCallback, useEffect, useRef, useState} from "react";
 
 function App() {
     const [key, setKey] = useState<string>('');
-    const [dayWord] = useState<string>('POILE');
-    const [validateLenght] = useState<number>(dayWord.length)
+    const [dayWord] = useState<string>('POLE');
+    const [validateLength] = useState<number>(dayWord.length)
 
     const keyRef = useRef(key);
     const dayWordRef = useRef(dayWord);
 
     function getUserKey(value: string) {
+        const upper = value.toUpperCase();
+
+        if (key.length === 0 && upper === dayWord[0]) return;
+
         setKey(prev => {
-            const newKey = prev + value.toUpperCase();
-            return newKey.length > validateLenght ? prev : newKey;
+            const newKey = prev + upper;
+            return newKey.length > validateLength - 1 ? prev : newKey;
         });
     }
 
@@ -24,7 +28,15 @@ function App() {
         return;
     }
 
-    // Sync les refs avec les states
+    const onsubmit = useCallback(() => {
+        const result = dayWord[0] + key;
+        if (key.length === validateLength - 1 && result === dayWord) {
+            setTimeout(() => {
+                alert("You win");
+            }, 200);
+        }
+    }, [key, dayWord, validateLength]);
+
     useEffect(() => {
         keyRef.current = key;
     }, [key]);
@@ -35,32 +47,32 @@ function App() {
 
     useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
+            const upper = e.key.toUpperCase();
 
             if (e.key === "Backspace") {
-                erase()
+                erase();
+                return;
             }
 
-            if (!/^[A-Za-z]+$/.test(e.key)) return;
+            if (e.key === "Enter") {
+                onsubmit();
+                return;
+            }
+
+            if (key.length === 0 && upper === dayWord[0]) return;
+
+            if (!/^[A-Za-z]+$/.test(upper)) return;
 
             setKey(prev => {
-                const newKey = prev + e.key.toUpperCase();
-                return newKey.length > validateLenght ? prev : newKey;
+                const newKey = prev + upper;
+                return newKey.length > validateLength - 1 ? prev : newKey;
             });
 
         };
 
         window.addEventListener('keydown', handleKeyDown);
         return () => window.removeEventListener('keydown', handleKeyDown);
-    }, [validateLenght]);
-
-    useEffect(() => {
-        if (key.length === validateLenght && key === dayWord) {
-
-            setTimeout(() => {
-                alert("You win");
-            }, 200);
-        }
-    }, [key, dayWord, validateLenght]);
+    }, [key, dayWord, validateLength, onsubmit]);
 
 
     return (
@@ -71,10 +83,10 @@ function App() {
 
             <div className='flex flex-col justify-between'>
                 <div>
-                    <Dashboard keyChar={key}/>
+                    <Dashboard keyChar={key} dayWord={dayWord}/>
                 </div>
                 <div>
-                    <Keyboard getUserKey={getUserKey} erase={erase}/>
+                    <Keyboard getUserKey={getUserKey} erase={erase} submit={onsubmit}/>
                 </div>
             </div>
         </>
