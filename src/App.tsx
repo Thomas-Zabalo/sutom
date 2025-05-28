@@ -13,7 +13,7 @@ interface Attempt {
 
 function App() {
     const [key, setKey] = useState<string>('');
-    const [dayWord] = useState<string>('POLE');
+    const [dayWord] = useState<string>('');
     const [validateLength] = useState<number>(dayWord.length)
     const [attempt, setAttempt] = useState<number>(1);
     const [submittedAttempts, setSubmittedAttempts] = useState<Attempt[]>([]);
@@ -47,7 +47,7 @@ function App() {
     }
 
 
-    function erase() {
+    function eraseChar() {
         setKey(prev => prev.slice(0, -1));
         return;
     }
@@ -102,7 +102,7 @@ function App() {
             const upper = e.key.toUpperCase();
 
             if (e.key === "Backspace") {
-                erase();
+                eraseChar();
                 return;
             }
 
@@ -133,7 +133,7 @@ function App() {
                 <Button/>
             </div>
 
-            <div className='flex flex-col justify-between'>
+            <div className='flex flex-col justify-between items-center'>
                 <div>
                     <Dashboard
                         keyChar={key}
@@ -144,7 +144,7 @@ function App() {
                 <div>
                     <Keyboard
                         getUserKey={getUserKey}
-                        erase={erase}
+                        eraseChar={eraseChar}
                         submit={onsubmit}/>
                 </div>
             </div>
