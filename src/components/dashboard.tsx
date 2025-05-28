@@ -1,22 +1,41 @@
-interface value {
-    keyChar: string;
-    dayWord: string;
+type LetterStatus = 'correct' | 'present' | 'absent';
+
+interface Attempt {
+    word: string;
+    status: LetterStatus[];
 }
 
-export default function Dashboard({keyChar, dayWord}: value) {
+interface DashboardProps {
+    keyChar: string;
+    dayWord: string;
+    attempt: number;
+    submittedAttempts: Attempt[];
+}
+
+
+export default function Dashboard({keyChar, dayWord, submittedAttempts}: DashboardProps) {
     const keyIndex = keyChar.toUpperCase().split('');
 
-    const rows = [];
-
-
-    rows.push(
-        <tr className='text-center'>
-            <th>{dayWord[0]}</th>
-            {dayWord.split('').slice(1).map((_, index) => (
-                <th key={index + 1}>{keyIndex[index] ? keyIndex[index] : '_'}</th>
+    const rows = submittedAttempts.map((attemptObj, index) => (
+        <tr key={index} className="text-center">
+            <th className={`border p-2 ${attemptObj.status[0]}`}>{attemptObj.word[0]}</th>
+            {attemptObj.word.slice(1).split('').map((char, i) => (
+                <th key={i} className={`border p-2 ${attemptObj.status[i + 1]}`}>
+                    {char}
+                </th>
             ))}
-        </tr>)
+        </tr>
+    ));
 
+    // Ligne actuelle
+    rows.push(
+        <tr key="current" className='text-center'>
+            <th>{dayWord[0]}</th>
+            {dayWord.slice(1).split('').map((_, index) => (
+                <th key={index + 1}>{keyIndex[index] || '_'}</th>
+            ))}
+        </tr>
+    );
 
     return (
         <>
