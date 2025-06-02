@@ -17,11 +17,14 @@ export default function Dashboard({keyChar, dayWord, submittedAttempts}: Dashboa
     const keyIndex = keyChar.toUpperCase().split('');
 
     const rows = submittedAttempts.map((attemptObj, index) => (
-        <li className="list-row">
-            <div key={index} className="flex gap-3">
-                <div className={`correct w-8 h-8 flex items-center justify-center`}>{attemptObj.word[0]}</div>
+        <li key={`attempt-${index}`} className="list-row">
+            <div className="flex gap-3">
+                <div className="correct w-8 h-8 flex items-center justify-center">{attemptObj.word[0]}</div>
                 {attemptObj.word.slice(1).split('').map((char, i) => (
-                    <div key={i + 1} className={`w-8 h-8 flex items-center justify-center ${attemptObj.status[i + 1]}`}>
+                    <div
+                        key={i + 1}
+                        className={`w-8 h-8 flex items-center justify-center ${attemptObj.status[i + 1]}`}
+                    >
                         {char}
                     </div>
                 ))}
@@ -29,17 +32,39 @@ export default function Dashboard({keyChar, dayWord, submittedAttempts}: Dashboa
         </li>
     ));
 
+// Ligne en cours de saisie
     rows.push(
-        <li className="list-row">
-            <div key="current" className="flex gap-3">
+        <li key="current" className="list-row">
+            <div className="flex gap-3">
                 <div className="correct w-8 h-8 flex items-center justify-center">{dayWord[0]}</div>
                 {dayWord.slice(1).split('').map((_, index) => (
-                    <div className={`w-8 h-8 flex items-center justify-center ${keyIndex[index] && 'played'}`}
-                         key={index + 1}>{keyIndex[index] || '_'}</div>
+                    <div
+                        key={index + 1}
+                        className={`w-8 h-8 flex items-center justify-center ${keyIndex[index] ? 'played' : ''}`}
+                    >
+                        {keyIndex[index] || '_'}
+                    </div>
                 ))}
             </div>
         </li>
     );
+
+// Lignes vides restantes pour compléter jusqu'à 5
+    const totalLines = 5;
+    const remainingLines = totalLines - submittedAttempts.length - 1; // -1 pour la ligne actuelle
+
+    for (let i = 0; i < remainingLines; i++) {
+        rows.push(
+            <li key={`empty-${i}`} className="list-row">
+                <div className="flex gap-3">
+                    {dayWord.split('').map((_, index) => (
+                        <div key={index} className="w-8 h-8 flex items-center justify-center">_</div>
+                    ))}
+                </div>
+            </li>
+        );
+    }
+
 
     return (
         <>

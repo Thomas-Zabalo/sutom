@@ -13,7 +13,7 @@ interface Attempt {
 
 function App() {
     const [key, setKey] = useState<string>('');
-    const [dayWord] = useState<string>('');
+    const [dayWord] = useState<string>('Jean');
     const [validateLength] = useState<number>(dayWord.length)
     const [attempt, setAttempt] = useState<number>(1);
     const [submittedAttempts, setSubmittedAttempts] = useState<Attempt[]>([]);
@@ -27,7 +27,7 @@ function App() {
     }, [key]);
 
     useEffect(() => {
-        dayWordRef.current = dayWord;
+        dayWordRef.current = dayWord.toUpperCase();
     }, [dayWord]);
 
     useEffect(() => {
@@ -83,9 +83,9 @@ function App() {
         const result = dayWord[0] + key;
         if (result.length < dayWord.length) return;
 
-        const status = getResultStatus(result, dayWord);
+        const status = getResultStatus(result, dayWord.toUpperCase());
 
-        if (key.length === validateLength - 1 && result === dayWord) {
+        if (key.length === validateLength - 1 && result === dayWord.toUpperCase()) {
             setTimeout(() => {
                 alert("You win");
             }, 200);
